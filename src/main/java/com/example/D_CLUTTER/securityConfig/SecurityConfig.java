@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -36,11 +37,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFil
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/User/sign_up/" ,"/User/login/").permitAll()
                     .requestMatchers("/admin/registration/").permitAll()
+                    .requestMatchers("/product/upload/").permitAll()
                     .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterBefore(corsFilter() , SessionManagementFilter.class);
-//                        .addFilterBefore(jwtFilter , Sess ionManagementFilter.class);
             .addFilterBefore(jwtFilter , UsernamePasswordAuthenticationFilter.class)
             .cors(cors -> cors.configurationSource(request -> {
                 var config = new CorsConfiguration();
@@ -50,19 +50,34 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFil
                 config.setAllowCredentials(true);
                 return config;
             }));
+//            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Use method for CORS
+
     return httpSecurity.build();
 }
 
-private CorsFilter corsFilter() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
-    config.addAllowedOriginPattern("*");
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("*");
-    source.registerCorsConfiguration("/**", config);
-    return new CorsFilter(source);
-}
+//private CorsFilter corsFilter() {
+//    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//    CorsConfiguration config = new CorsConfiguration();
+//    config.setAllowCredentials(true);
+//    config.addAllowedOriginPattern("*");
+//    config.addAllowedHeader("*");
+//    config.addAllowedMethod("*");
+//    source.registerCorsConfiguration("/**", config);
+//    return new CorsFilter(source);
+//}
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://172.16.0.179:8080")); // Add External IP
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(false);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
 @Bean
 public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService){

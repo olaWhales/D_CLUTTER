@@ -55,12 +55,6 @@ public class UserRegisterServiceImp implements UserRegisterService {
         }
         Users user = userRepository.findByEmail(email).
                 orElseThrow(() -> new IllegalArgumentException("Email not found"));
-//        Optional<Users> userOptional = userRepository.findByEmail(email);
-//        if(userOptional.isEmpty()) {
-//            throw new IllegalArgumentException("The email you entered isn't found");
-//        }
-        System.out.print("password" +  password);
-        System.out.println("this is request username" +  userLoginRequest.getPassword());
         if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Your have entered the wrong password");
         }

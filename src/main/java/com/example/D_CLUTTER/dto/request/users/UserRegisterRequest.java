@@ -13,7 +13,7 @@ public class UserRegisterRequest {
     private String password;
     private String email;
     private String contact;
-    private LocalDateTime dateCreated;
+//    private LocalDateTime dateCreated;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -47,9 +47,9 @@ public class UserRegisterRequest {
         return contact;
     }
 
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
+//    public LocalDateTime getDateCreated() {
+//        return dateCreated;
+//    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -59,7 +59,9 @@ public class UserRegisterRequest {
         this.contact = contact;
     }
 
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+//    public void setDateCreated(LocalDateTime dateCreated) {
+//        this.dateCreated = dateCreated;
+//    }
+
+
 }
