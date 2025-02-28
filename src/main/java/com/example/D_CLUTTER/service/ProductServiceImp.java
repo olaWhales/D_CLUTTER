@@ -79,6 +79,27 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     public UpdateProductResponse update(UpdateProductRequest updateProduct) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalArgumentException("User is not authenticated");
+        }
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        if(principal == null){
+            throw new IllegalArgumentException("User is not authenticated");
+        }
+//        Long product = updateProduct.ge
+        Users user = principal.getUsers();
+
+//        Product product = user.getProducts()
+//        if(user.getId().equals(product.getId())){
+//            product.setName(updateProduct.getProductName());
+//            product.setDescription(updateProduct.getProductDescription());
+//            product.setQuantity(updateProduct.getProductQuantity());
+//            product.setPrice(updateProduct.getProductPrice());
+//            product.setId(updateProduct.getId());
+//            productRepository.save(product);
+//        }
+
         return null;
     }
 
