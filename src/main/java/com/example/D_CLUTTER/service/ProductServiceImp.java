@@ -87,8 +87,25 @@ public class ProductServiceImp implements ProductService {
         if(principal == null){
             throw new IllegalArgumentException("User is not authenticated");
         }
-//        Long product = updateProduct.ge
-        Users user = principal.getUsers();
+        Long product = updateProduct.getId();
+        if(product == null){
+            throw new IllegalArgumentException("Product Id is null,please provide a valid product identity");
+        }
+        Product product1 = productRepository.findById(product).
+                orElseThrow(()-> new IllegalArgumentException("Product not found"));
+        if(!principal.getUsers().getId().equals(product1.getId())) {
+            throw new IllegalArgumentException("User and the product id is not match");
+        }
+        product1.setName(updateProduct.getProductName());
+        product1.setDescription(updateProduct.getProductDescription());
+        product1.setQuantity(updateProduct.getProductQuantity());
+        product1.setPrice(updateProduct.getProductPrice());
+        productRepository.save(product1);
+
+        UpdateProductResponse response = new UpdateProductResponse();
+        response.setMessage("Product updated successfully");
+
+//        Users user = principal.getUsers();
 
 //        Product product = user.getProducts()
 //        if(user.getId().equals(product.getId())){
@@ -100,11 +117,20 @@ public class ProductServiceImp implements ProductService {
 //            productRepository.save(product);
 //        }
 
-        return null;
+        return response ;
     }
 
     @Override
     public List<GetProductResponse> getAll(GetAllProductsRequest getAll) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalArgumentException("User is not authenticated");
+        }
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        if(principal == null){
+            throw new IllegalArgumentException("User is not authenticated");
+        }
+
         return List.of();
     }
 
