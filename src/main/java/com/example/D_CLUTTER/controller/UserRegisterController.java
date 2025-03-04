@@ -42,4 +42,6 @@ public class UserRegisterController {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
