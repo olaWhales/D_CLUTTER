@@ -72,23 +72,31 @@ public class UserRegisterServiceImp implements UserRegisterService {
 
     @Override
     public UserChangePasswordResponse changepassword(UserChangePasswordRequest userChangePasswordRequest) {
-        String password = userChangePasswordRequest.getOldPassword();
-        if(password.isEmpty()) {
+        if (userChangePasswordRequest.getOldPassword().isEmpty()) {
             throw new IllegalArgumentException("Old password cannot be empty");
         }
-        Users user = userRepository.findByPassword(password).
-                orElseThrow(()-> new IllegalArgumentException("Email or password not found, please provide correct credential"));
-        if(!bCryptPasswordEncoder.matches(password , user.getPassword())) {
-            throw new IllegalArgumentException(("The password you provided do not match"));
+
+        //I find user by email instead of password
+        Users user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User with this email does not exist"));
+
+        if (!bCryptPasswordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("The old password you provided is incorrect");
         }
-        user.setPassword(userChangePasswordRequest.getNewPassword());
-        user.setPassword(userChangePasswordRequest.getConfirmPassword());
-        if(!userChangePasswordRequest.getNewPassword().equals(userChangePasswordRequest.getConfirmPassword())) {
-            throw new IllegalArgumentException("The password do not match");
+
+        // I check if new and confirm password match
+        if (!userChangePasswordRequest.getNewPassword().equals(userChangePasswordRequest.getConfirmPassword())) {
+            throw new IllegalArgumentException("New password and confirm password do not match");
         }
+
+        // I encrypt and save the new password
+        user.setPassword(bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword()));
         userRepository.save(user);
-        UserChangePasswordResponse userChangePasswordResponse = new UserChangePasswordResponse();
-        userChangePasswordResponse.setMessage("You have successfully changed your password");
-        return userChangePasswordResponse;
+
+        // Response message
+        UserChangePasswordResponse response = new UserChangePasswordResponse();
+        response.setMessage("You have successfully changed your password");
+        return response;
     }
+
 }
