@@ -1,5 +1,6 @@
 package com.example.D_CLUTTER.controller;
 
+import com.example.D_CLUTTER.dto.request.users.UserChangePasswordRequest;
 import com.example.D_CLUTTER.dto.request.users.UserLoginRequest;
 import com.example.D_CLUTTER.dto.request.users.UserRegisterRequest;
 import com.example.D_CLUTTER.service.UserRegisterService;
@@ -28,6 +29,15 @@ public class UserRegisterController {
     public ResponseEntity<?> Login(@RequestBody UserLoginRequest userLoginRequest) {
         try{
             return new ResponseEntity<>(userRegisterService.loginUser(userLoginRequest), HttpStatus.OK);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/changePassword/")
+    public ResponseEntity<?> ChangePassword(@RequestBody UserChangePasswordRequest userChangePasswordRequest) {
+        try{
+            return new ResponseEntity<>(userRegisterService.changepassword(userChangePasswordRequest), HttpStatus.OK);
         }catch (Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }

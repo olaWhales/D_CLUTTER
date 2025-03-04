@@ -36,6 +36,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFil
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/User/sign_up/" ,"/User/login/").permitAll()
+                    .requestMatchers("/User/changePassword/").permitAll()
                     .requestMatchers("/admin/registration/").permitAll()
                     .requestMatchers("/product/upload/").permitAll()
                     .anyRequest().authenticated())

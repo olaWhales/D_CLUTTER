@@ -37,7 +37,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
-@Configuration
+import java.util.List;
+
+    @Configuration
 public class WebConfig {
 
     @Bean
@@ -46,6 +48,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(@NotNull CorsRegistry registry) {
                 registry.addMapping("/") // Allow all endpoints
+                        .allowedOrigins("*") // Allow all origins (for testing)   i just added this to 
                         .allowedOrigins("http://localhost:5173", "https://dclutter-production-52ee.up.railway.app") // Allow specific frontend origins
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific HTTP methods
                         .allowedHeaders("*") // Allow all headers

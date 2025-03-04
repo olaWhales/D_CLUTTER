@@ -1,8 +1,10 @@
 package com.example.D_CLUTTER.service;
 
 import com.example.D_CLUTTER.data.Users;
+import com.example.D_CLUTTER.dto.Response.users.UserChangePasswordResponse;
 import com.example.D_CLUTTER.dto.Response.users.UserLoginResponse;
 import com.example.D_CLUTTER.dto.Response.users.UserRegisterResponse;
+import com.example.D_CLUTTER.dto.request.users.UserChangePasswordRequest;
 import com.example.D_CLUTTER.dto.request.users.UserLoginRequest;
 import com.example.D_CLUTTER.dto.request.users.UserRegisterRequest;
 import com.example.D_CLUTTER.repository.UserRepository;
@@ -68,5 +70,25 @@ public class UserRegisterServiceImp implements UserRegisterService {
         return userLoginResponse;
     }
 
-
+    @Override
+    public UserChangePasswordResponse changepassword(UserChangePasswordRequest userChangePasswordRequest) {
+        String password = userChangePasswordRequest.getOldPassword();
+        if(password.isEmpty()) {
+            throw new IllegalArgumentException("Old password cannot be empty");
+        }
+        Users user = userRepository.findByPassword(password).
+                orElseThrow(()-> new IllegalArgumentException("Email or password not found, please provide correct credential"));
+        if(!bCryptPasswordEncoder.matches(password , user.getPassword())) {
+            throw new IllegalArgumentException(("The password you provided do not match"));
+        }
+        user.setPassword(userChangePasswordRequest.getNewPassword());
+        user.setPassword(userChangePasswordRequest.getConfirmPassword());
+        if(!userChangePasswordRequest.getNewPassword().equals(userChangePasswordRequest.getConfirmPassword())) {
+            throw new IllegalArgumentException("The password do not match");
+        }
+        userRepository.save(user);
+        UserChangePasswordResponse userChangePasswordResponse = new UserChangePasswordResponse();
+        userChangePasswordResponse.setMessage("You have successfully changed your password");
+        return userChangePasswordResponse;
+    }
 }
