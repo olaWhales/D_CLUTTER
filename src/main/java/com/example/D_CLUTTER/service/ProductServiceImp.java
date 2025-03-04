@@ -33,12 +33,12 @@ public class ProductServiceImp implements ProductService {
             System.out.println( " is not a user " + principal);
             throw new IllegalArgumentException("Invalid user authentication");
         }
-        Users user = ((UserPrincipal) principal).getUsers(); // Get actual user
+        Users user = ((UserPrincipal) principal).getUsers();
         Product product = new Product();
         product.setUsers(user);
         product.setName(productRequest.getProductName());
         product.setDescription(productRequest.getProductDescription());
-        product.setQuantity(productRequest.getProductQuantity());
+//        product.setQuantity(productRequest.getProductQuantity());
         product.setPrice(productRequest.getProductPrice());
         product.setId(product.getId());
         return getResponse(product);
@@ -48,7 +48,6 @@ public class ProductServiceImp implements ProductService {
         CreateProductResponse response = new CreateProductResponse();
         response.setProductName(product.getName());
         response.setProductDescription(product.getDescription());
-        response.setProductQuantity(product.getQuantity());
         response.setProductPrice(product.getPrice());
         response.setProductId(product.getId());
         return response;
@@ -98,7 +97,6 @@ public class ProductServiceImp implements ProductService {
         }
         product1.setName(updateProduct.getProductName());
         product1.setDescription(updateProduct.getProductDescription());
-        product1.setQuantity(updateProduct.getProductQuantity());
         product1.setPrice(updateProduct.getProductPrice());
         productRepository.save(product1);
 

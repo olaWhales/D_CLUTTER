@@ -12,7 +12,7 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-    private int quantity;
+//    private int quantity;
 
     @ManyToOne
     @JoinColumn (name = "users_id")
@@ -59,11 +59,4 @@ public class Product {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }

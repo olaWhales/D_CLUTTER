@@ -1,5 +1,6 @@
 package com.example.D_CLUTTER.service;
 
+import com.example.D_CLUTTER.data.UserPrincipal;
 import com.example.D_CLUTTER.data.Users;
 import com.example.D_CLUTTER.dto.Response.users.UserChangePasswordResponse;
 import com.example.D_CLUTTER.dto.Response.users.UserLoginResponse;
@@ -10,6 +11,8 @@ import com.example.D_CLUTTER.dto.request.users.UserRegisterRequest;
 import com.example.D_CLUTTER.repository.UserRepository;
 import com.example.D_CLUTTER.securityConfig.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -72,17 +75,25 @@ public class UserRegisterServiceImp implements UserRegisterService {
 
     @Override
     public UserChangePasswordResponse changepassword(UserChangePasswordRequest userChangePasswordRequest) {
-        if (userChangePasswordRequest.getOldPassword().isEmpty()) {
-            throw new IllegalArgumentException("Old password cannot be empty");
+        if (userChangePasswordRequest.getOldPassword().isEmpty() || userChangePasswordRequest.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("User email or password cannot be empty");
         }
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null) {
+            throw new IllegalArgumentException("Authentication cannot be null");
+        }
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        if(userPrincipal == null){
+            throw new IllegalArgumentException("UserPrincipal cannot be null");
+        }
+//        if(userPrincipal.getUsers().equals())
         //I find user by email instead of password
-        Users user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User with this email does not exist"));
-
-        if (!bCryptPasswordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("The old password you provided is incorrect");
-        }
+//        Users user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
+//                .orElseThrow(() -> new IllegalArgumentException("User with this email does not exist"));
+//
+//        if (!bCryptPasswordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
+//            throw new IllegalArgumentException("The old password you provided is incorrect");
+//        }
 
         // I check if new and confirm password match
         if (!userChangePasswordRequest.getNewPassword().equals(userChangePasswordRequest.getConfirmPassword())) {
@@ -90,8 +101,8 @@ public class UserRegisterServiceImp implements UserRegisterService {
         }
 
         // I encrypt and save the new password
-        user.setPassword(bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword()));
-        userRepository.save(user);
+//        user.setPassword(bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword()));
+//        userRepository.save(user);
 
         // Response message
         UserChangePasswordResponse response = new UserChangePasswordResponse();

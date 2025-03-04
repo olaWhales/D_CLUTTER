@@ -5,11 +5,9 @@ import lombok.Data;
 
 @Data
 public class CreateProductRequest {
-//    private Users users;
     private String productName;
     private String productDescription;
     private Double productPrice;
-    private Integer productQuantity;
 
 
     public String getProductName() {
@@ -36,21 +34,6 @@ public class CreateProductRequest {
         this.productPrice = productPrice;
     }
 
-    public Integer getProductQuantity() {
-        return productQuantity;
-    }
-
-    public void setProductQuantity(Integer productQuantity) {
-        this.productQuantity = productQuantity;
-    }
-
-//    public Users getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(Users users) {
-//        this.users = users;
-//    }
 }
 
 
