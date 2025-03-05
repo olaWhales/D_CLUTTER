@@ -75,39 +75,32 @@ public class UserRegisterServiceImp implements UserRegisterService {
 
     @Override
     public UserChangePasswordResponse changepassword(UserChangePasswordRequest userChangePasswordRequest) {
+        String email = userChangePasswordRequest.getEmail();
+        String password = userChangePasswordRequest.getOldPassword();
         if (userChangePasswordRequest.getOldPassword().isEmpty() || userChangePasswordRequest.getEmail().isEmpty()) {
             throw new IllegalArgumentException("User email or password cannot be empty");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null) {
-            throw new IllegalArgumentException("Authentication cannot be null");
+        if(authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalArgumentException("User is not authenticated");
         }
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        if(userPrincipal == null){
-            throw new IllegalArgumentException("UserPrincipal cannot be null");
-        }
-//        if(userPrincipal.getUsers().equals())
-        //I find user by email instead of password
-//        Users user = userRepository.findByEmail(userChangePasswordRequest.getEmail())
-//                .orElseThrow(() -> new IllegalArgumentException("User with this email does not exist"));
-//
-//        if (!bCryptPasswordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
-//            throw new IllegalArgumentException("The old password you provided is incorrect");
+//        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+//        if(userPrincipal == null){
+//            throw new IllegalArgumentException("UserPrincipal cannot be null");
 //        }
 
-        // I check if new and confirm password match
-        if (!userChangePasswordRequest.getNewPassword().equals(userChangePasswordRequest.getConfirmPassword())) {
-            throw new IllegalArgumentException("New password and confirm password do not match");
+        Users user = userRepository.findByEmail(email).
+                orElseThrow(() -> new IllegalArgumentException("Email not found"));
+        user.setPassword(password);
+        user.setPassword(userChangePasswordRequest.getNewPassword());
+        user.setPassword(userChangePasswordRequest.getConfirmPassword());
+
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())){
+            throw new IllegalArgumentException("Your have entered the wrong password, please provide the correct password");
         }
 
-        // I encrypt and save the new password
-//        user.setPassword(bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword()));
-//        userRepository.save(user);
+        throw new IllegalArgumentException("Passwords do not match");
 
-        // Response message
-        UserChangePasswordResponse response = new UserChangePasswordResponse();
-        response.setMessage("You have successfully changed your password");
-        return response;
     }
 
 }

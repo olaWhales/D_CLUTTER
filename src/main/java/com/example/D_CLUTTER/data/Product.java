@@ -12,12 +12,30 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-//    private int quantity;
+//    private byte[] image ;
+    private String imagePath;  // Store the file path, not byte[]
 
     @ManyToOne
     @JoinColumn (name = "users_id")
     @JsonBackReference
     private Users users;
+
+//    public byte[] getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(byte[] image) {
+//        this.image = image;
+//    }
+
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     public Users getUsers() {
         return users;

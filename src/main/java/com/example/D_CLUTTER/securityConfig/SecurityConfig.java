@@ -16,11 +16,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.multipart.support.MultipartFilter;
 
 import java.util.List;
 @Configuration
@@ -38,6 +40,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFil
                     .requestMatchers("/User/sign_up/" ,"/User/login/" , "/User/changePassword").permitAll()
                     .requestMatchers("/admin/registration/").permitAll()
                     .requestMatchers("/product/upload/").permitAll()
+//                    .requestMatchers("/product/upload/").authenticated()
                     .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -51,6 +54,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFil
                 return config;
             }));
 //            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Use method for CORS
+//        .addFilterBefore(new MultipartFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return httpSecurity.build();
 }
@@ -90,9 +94,9 @@ public AuthenticationProvider authenticationProvider(UserDetailsService userDeta
 public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
     return configuration.getAuthenticationManager();
 }
-@Bean
-public BCryptPasswordEncoder passwordEncoder(){
-    return new BCryptPasswordEncoder();
-}
+//@Bean
+//public BCryptPasswordEncoder passwordEncoder(){
+//    return new BCryptPasswordEncoder();
+//}
 }
 
